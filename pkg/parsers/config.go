@@ -7,21 +7,15 @@ type options struct {
 	Whitelists []string `yaml:"whitelists"`
 }
 
-type slack struct {
-	Text    string
-	URL     string
+type general struct {
 	Token   string `yaml:"token"`
 	Color   string `yaml:"color"`
 	Channel string `yaml:"channel"`
 }
 
 type telegram struct {
-	Text      string
-	URL       string
-	Token     string `yaml:"token"`
-	ChatID    string `yaml:"chat_id"`
-	Silent    bool   `yaml:"silent"`
-	ParseMode string `yaml:"parse_mode"`
+	Token  string `yaml:"token"`
+	ChatID string `yaml:"chat_id"`
 }
 
 // Configs default structure for config
@@ -29,8 +23,16 @@ type Configs struct {
 	Logformat string `yaml:"log_format" validate:"nonzero"`
 
 	Rules struct {
+		Cache  bool    `yaml:"cache"`
 		Threat options `yaml:"threat" validate:"nonzero"`
 	} `yaml:"rules" validate:"nonzero"`
+
+	Prometheus struct {
+		Active   bool   `yaml:"active"`
+		Host     string `yaml:"host"`
+		Port     int    `yaml:"port"`
+		Endpoint string `yaml:"endpoint"`
+	} `yaml:"prometheus" validate:"nonzero"`
 
 	Alert struct {
 		Active   bool   `yaml:"active"`
@@ -38,8 +40,9 @@ type Configs struct {
 	} `yaml:"alert" validate:"nonzero"`
 
 	Notifications struct {
-		Slack    slack    `yaml:"slack"`
+		Slack    general    `yaml:"slack"`
 		Telegram telegram `yaml:"telegram"`
+		Discord  general  `yaml:"discord"`
 	} `yaml:"notifications"`
 }
 

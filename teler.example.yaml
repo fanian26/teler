@@ -5,8 +5,8 @@ log_format: |
   "$http_referer" "$http_user_agent" $request_length $request_time 
   [$proxy_upstream_name] $upstream_addr $upstream_response_length $upstream_response_time $upstream_status $req_id
 
-
 rules:
+  cache: true
   threat:
     excludes:
       # - "Common Web Attack"
@@ -15,12 +15,18 @@ rules:
       # - "Bad Crawler"
       # - "Directory Bruteforce"
 
-    # It can be user-agent, request path, HTTP referrer, IP address and/or request query values/
+    # It can be user-agent, request path, HTTP referrer, IP address and/or request query values parsed in regExp
     whitelists:
-      # - "okhttp"
-      # - "/config"
-      # - "https://www.facebook.com"
-      # - "192.168.0.1"
+      # - "(curl|Go-http-client|okhttp)/*"
+      # - "^/wp-login\\.php"
+      # - "https://www\\.facebook\\.com"
+      # - "192\\.168\\.0\\.1"
+
+prometheus:
+  active: false
+  host: "localhost"
+  port: 9099
+  endpoint: "/metrics"
 
 alert:
   active: false
@@ -34,6 +40,9 @@ notifications:
 
   telegram:
     token: "123456:ABC-DEF1234...-..."
-    chat_id: "111000"
-    silent: false
-    parse_mode: "MarkdownV2"
+    chat_id: "-111000"
+
+  discord:
+    token: "NkWkawkawkawkawka.X0xo.n-kmZwA8aWAA"
+    color: "16312092"
+    channel: "700000000000000..."

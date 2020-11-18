@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"os"
 	"strings"
 
 	"github.com/projectdiscovery/gologger"
@@ -11,12 +10,13 @@ import (
 func Exit(err string) {
 	msg := "Error! "
 	if err != "" {
+		println()
 		for _, e := range strings.Split(strings.TrimSuffix(err, "\n"), "\n") {
 			msg += e
 			Show(msg)
 		}
 		gologger.Infof("Use \"-h\" flag for more info about command.")
-		os.Exit(1)
+		Abort(9)
 	}
 }
 

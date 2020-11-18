@@ -11,14 +11,13 @@ import (
 	"github.com/valyala/fastjson"
 	"ktbs.dev/teler/common"
 	"ktbs.dev/teler/pkg/matchers"
+	"ktbs.dev/teler/pkg/metrics"
 	"ktbs.dev/teler/resource"
 )
 
 // Analyze logs from threat resources
 func Analyze(options *common.Options, logs *gonx.Entry) (bool, map[string]string) {
 	var match bool
-
-	out := make(map[string]string)
 	log := make(map[string]string)
 	rsc := resource.Get()
 
@@ -33,8 +32,7 @@ func Analyze(options *common.Options, logs *gonx.Entry) (bool, map[string]string
 		con := threat.FieldByName("Content").String()
 		exc := threat.FieldByName("Exclude").Bool()
 
-		out["date"] = log["time_local"]
-		out["category"] = cat
+		log["category"] = cat
 
 		if exc {
 			continue
@@ -42,57 +40,81 @@ func Analyze(options *common.Options, logs *gonx.Entry) (bool, map[string]string
 
 		switch cat {
 		case "Common Web Attack":
-			req, _ := url.Parse(log["request_uri"])
+			req, err := url.Parse(log["request_uri"])
+			if err != nil {
+				break
+			}
+
 			query := req.Query()
 			if len(query) > 0 {
-				for _, q := range query {
+				for p, q := range query {
 					fil, _ := fastjson.Parse(con)
 					dec, _ := url.QueryUnescape(strings.Join(q, ""))
 					cwa := fil.GetArray("filters")
 
 					for _, v := range cwa {
-						out["category"] = cat + ": " + string(v.GetStringBytes("description"))
-						out["element"] = log["request_uri"]
+						log["category"] = cat + ": " + string(v.GetStringBytes("description"))
+						log["element"] = "request_uri"
 						quote := regexp.QuoteMeta(dec)
 
-						if white := isWhitelist(options, quote); white {
-							break
+						if isWhitelist(options, p+"="+dec) {
+							continue
 						}
 
 						match = matchers.IsMatch(
 							string(v.GetStringBytes("rule")),
 							quote,
 						)
+
 						if match {
+							metrics.GetCWA.WithLabelValues(
+								string(v.GetStringBytes("description")),
+								log["remote_addr"],
+								log["request_uri"],
+								log["status"],
+							).Inc()
+
 							break
 						}
 					}
 				}
 			}
 		case "Bad Crawler":
-			out["element"] = log["http_user_agent"]
-			if white := isWhitelist(options, log["http_user_agent"]); white {
+			log["element"] = "http_user_agent"
+
+			if isWhitelist(options, log["http_user_agent"]) {
 				break
 			}
 
 			for _, pat := range strings.Split(con, "\n") {
 				if match = matchers.IsMatch(pat, log["http_user_agent"]); match {
+					metrics.GetBadCrawler.WithLabelValues(
+						log["remote_addr"],
+						log["http_user_agent"],
+						log["status"],
+					).Inc()
+
 					break
 				}
 			}
 		case "Bad IP Address":
-			out["element"] = log["remote_addr"]
-			if white := isWhitelist(options, log["remote_addr"]); white {
+			log["element"] = "remote_addr"
+
+			if isWhitelist(options, log["remote_addr"]) {
 				break
 			}
 
 			ip := "(?m)^" + log["remote_addr"]
 			match = matchers.IsMatch(ip, con)
+			if match {
+				metrics.GetBadIP.WithLabelValues(log["remote_addr"]).Inc()
+			}
 		case "Bad Referrer":
-			out["element"] = log["http_referer"]
-			if white := isWhitelist(options, log["http_referer"]); white {
+			log["element"] = "http_referer"
+			if isWhitelist(options, log["http_referer"]) {
 				break
 			}
+
 			if log["http_referer"] == "-" {
 				break
 			}
@@ -101,24 +123,42 @@ func Analyze(options *common.Options, logs *gonx.Entry) (bool, map[string]string
 			ref := "(?m)^" + req.Host
 
 			match = matchers.IsMatch(ref, con)
+			if match {
+				metrics.GetBadReferrer.WithLabelValues(log["http_referer"]).Inc()
+			}
 		case "Directory Bruteforce":
-			out["element"] = log["request_uri"]
-			if white := isWhitelist(options, log["request_uri"]); white {
+			log["element"] = "request_uri"
+
+			if isWhitelist(options, log["request_uri"]) ||
+				matchers.IsMatch("^20(0|4)$", log["status"]) ||
+				matchers.IsMatch("^3[0-9]{2}$", log["status"]) {
 				break
 			}
 
-			req, _ := url.Parse(log["request_uri"])
+			req, err := url.Parse(log["request_uri"])
+			if err != nil {
+				break
+			}
+
 			if req.Path != "/" {
 				match = matchers.IsMatch(trimFirst(req.Path), con)
+			}
+
+			if match {
+				metrics.GetDirBruteforce.WithLabelValues(
+					log["remote_addr"],
+					log["request_uri"],
+					log["status"],
+				).Inc()
 			}
 		}
 
 		if match {
-			return match, out
+			return match, log
 		}
 	}
 
-	return match, out
+	return match, log
 }
 
 func trimFirst(s string) string {

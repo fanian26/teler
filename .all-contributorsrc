@@ -34,6 +34,87 @@
       "contributions": [
         "tool"
       ]
+    },
+    {
+      "login": "0ktavandi",
+      "name": "0ktavandi",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/26356781?v=4",
+      "profile": "https://github.com/0ktavandi",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "fikridhiyau",
+      "name": "Fik",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/73404079?v=4",
+      "profile": "http:///instagram.com/fikcompany",
+      "contributions": [
+        "design"
+      ]
+    },
+    {
+      "login": "fairyhunter13",
+      "name": "fairyhunter13",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/12372147?v=4",
+      "profile": "https://github.com/fairyhunter13",
+      "contributions": [
+        "test"
+      ]
+    },
+    {
+      "login": "zufardhiyaulhaq",
+      "name": "Zufar Dhiyaulhaq",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11990726?v=4",
+      "profile": "http://zufardhiyaulhaq.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JustHumanz",
+      "name": "Aldin Setiawan",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/43176061?v=4",
+      "profile": "https://github.com/JustHumanz",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "kirsle",
+      "name": "Noah Petherbridge",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1663507?v=4",
+      "profile": "https://www.kirsle.net/",
+      "contributions": [
+        "tool"
+      ]
+    },
+    {
+      "login": "zackijack",
+      "name": "Zackky Muhammad",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1515471?v=4",
+      "profile": "https://github.com/zackijack",
+      "contributions": [
+        "infra"
+      ]
+    },
+    {
+      "login": "acarl005",
+      "name": "Andy",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/8334252?v=4",
+      "profile": "https://github.com/acarl005",
+      "contributions": [
+        "tool"
+      ]
+    },
+    {
+      "login": "valyala",
+      "name": "Aliaksandr Valialkin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/283442?v=4",
+      "profile": "https://victoriametrics.com",
+      "contributions": [
+        "tool"
+      ]
     }
   ],
   "contributorsPerLine": 7,

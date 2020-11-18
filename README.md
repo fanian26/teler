@@ -1,19 +1,20 @@
 <p align="center">
-  <img alt="teler logo" src="https://user-images.githubusercontent.com/25837540/88009716-594ec700-cb3d-11ea-9863-0e44c2e9ea7c.jpg" height="150" />
+  <a href="#"><img alt="teler" src="https://user-images.githubusercontent.com/25837540/97091757-7200d880-1668-11eb-82c4-e5c4971d2bc8.png" height="400" /></a>
   <h3 align="center"><b>teler</b></h3>
 </p>
 
-![Kitabisa SecLab](https://img.shields.io/badge/kitabisa-security%20project-blue)
+[![Kitabisa SecLab](https://img.shields.io/badge/kitabisa-security%20project-blue)](#)
 [![License](https://img.shields.io/badge/License-Apache%202.0-yellowgreen)](https://github.com/kitabisa/teler/blob/development/LICENSE)
 [![made with Go](https://img.shields.io/badge/made%20with-Go-brightgreen)](http://golang.org)
-![Version](https://img.shields.io/badge/version-0.0.1--rc1.2-blueviolet)
-[![Platform](https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-green)](https://github.com/kitabisa/teler)
-![GitHub issues](https://img.shields.io/github/issues/kitabisa/teler)
-[![Gitter](https://badges.gitter.im/kitabisa-teler/community.svg)](https://gitter.im/kitabisa-teler/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Version](https://img.shields.io/badge/version-0.0.4--dev-blueviolet)](https://github.com/kitabisa/teler/releases)
+[![Platform](https://img.shields.io/badge/platform-osx%2Flinux%2Fwindows-green)](#)
+[![GitHub issues](https://img.shields.io/github/issues/kitabisa/teler)](https://github.com/kitabisa/teler/issues)
+
+<!-- [![Gitter](https://badges.gitter.im/kitabisa-teler/community.svg)](https://gitter.im/kitabisa-teler/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) -->
 <!-- [![Go report](https://goreportcard.com/badge/ktbs.dev/teler)](https://goreportcard.com/report/ktbs.dev/teler) -->
 
 <p align="center">
-  Real-time threat alert & hunting
+  Real-time HTTP Intrusion Detection
   <br />
   <a href="https://github.com/kitabisa/teler/blob/development/.github/CONTRIBUTING.md">Contribute</a>
   ·
@@ -26,12 +27,15 @@
 
 ---
 
-`teler` is an **real-time threat alert** and huting based on web log that runs in a **terminal** on &ast;nix systems. teler is working like an [Intrusion Detection System](https://en.wikipedia.org/wiki/Intrusion_detection_system), with resources that are compact enough to "_dictate_" a threat.
+`teler` is an **real-time intrusion detection** and threat alert based on web log that runs in a **terminal** with resources that we collect and provide by the community. :heart:
+
+[![teler](https://user-images.githubusercontent.com/25837540/97096468-f8ccaa00-1696-11eb-8830-0d3a7be45a2d.gif)](#)
 
 ## Table of Contents
 - [Table of Contents](#table-of-contents)
 - [Features](#features)
 - [Why teler?](#why-teler)
+- [Demo](#demo)
 - [Installation](#installation)
   - [from Binary](#from-binary)
   - [using Docker](#using-docker)
@@ -43,6 +47,8 @@
     - [Input](#input)
     - [Concurrency](#concurrency)
     - [Output](#output)
+    - [JSON Format](#json-format)
+    - [Remove Caches](#remove-caches)
 - [Configuration](#configuration)
   - [Log formats](#log-formats)
     - [Apache](#apache)
@@ -55,6 +61,8 @@
     - [Excludes](#excludes)
     - [Whitelists](#whitelists)
   - [Notification](#notification)
+  - [Metrics](#metrics)
+    - [Prometheus](#prometheus)
 - [Contributors](#contributors)
   - [Resources](#resources)
 - [Pronunciation](#pronunciation)
@@ -63,15 +71,16 @@
 
 ## Features
 
-* **Real-time**: Hunts are timed to be processed every 20 line-buffer _(can be configured)_ on the terminal
-  input and every second on the output. Wagelaseh!
+* **Real-time**: Analyze logs and identify suspicious activity in real-time.
 
-* **Alerting** _(roadmap)_: teler provides alerting when a threat is detected, push notifications include Slack, Telegram and Discord.
+* **Alerting**: teler provides alerting when a threat is detected, push notifications include Slack, Telegram and Discord.
 
-* **Latest resources**: Collections is continuously up-to-date, see [resources](#resources).
+* **Monitoring**: We've our own metrics if you want to monitor threats easily, and we use Prometheus for that.
+
+* **Latest resources**: Collections is continuously up-to-date.
 
 * **Minimal configuration**: You can just run it against your log file, write the log format and let
-  teler analyze the log and show you the threats!
+  teler analyze the log and show you alerts!
 
 * **Flexible log formats**: teler allows any custom log format string! It all depends on how you write the log format in configuration file.
 
@@ -80,12 +89,15 @@
 
 ## Why teler?
 
-<img src="https://user-images.githubusercontent.com/25837540/88010437-1130a400-cb3f-11ea-9089-b6a1e2fb1ae5.jpg" height="400">
+teler was designed to be a fast, terminal-based threat analyzer. Its core idea is to quickly analyze and hunt threats in real time!
 
-teler was designed to be a fast, terminal-based threat analyzer. Its core idea
-is to quickly analyze and hunt threats in real time without
-needing to use your browser (_great if you want to do a quick analysis of your
-access log via SSH, or if you simply love working in the terminal_).
+## Demo
+
+Here is a preview of `teler` with conditions of use as:
+
+| **Buffer-streams**  | **Incremental**   |
+|-------------------- |-----------------  |
+| <a href="https://asciinema.org/a/367616" alt="teler"><img src="https://asciinema.org/a/367616.svg"></a> | <a href="https://asciinema.org/a/367610" alt="teler"><img src="https://asciinema.org/a/367610.svg"></a> |
 
 ## Installation
 
@@ -99,15 +111,15 @@ The installation is easy. You can download a prebuilt binary from [releases page
 
 ### using Docker
 
-Build the Docker image with:
+Pull the Docker image by running:
 
 ```bash
-▶ docker build -t teler https://github.com/kitabisa/teler.git
+▶ docker pull kitabisa/teler
 ```
 
 ### from Source
 
-If you have go1.13+ compiler installed and configured:
+If you have go1.14+ compiler installed and configured:
 
 ```bash
 ▶ GO111MODULE=on go get -v -u ktbs.dev/teler/cmd/teler
@@ -150,7 +162,9 @@ If you've built teler with a Docker image:
 
 This will display help for the tool.
 
-<img src="https://user-images.githubusercontent.com/25837540/88668885-66efe800-d10d-11ea-95b6-038cc3a82406.png">
+<p align="center">
+  <a href="#"><img alt="teler" src="https://user-images.githubusercontent.com/25837540/97946822-164bf300-1dbe-11eb-8f54-3a25ee0eb80e.png" /></a>
+</p>
 
 Here are all the switches it supports.
 
@@ -160,6 +174,8 @@ Here are all the switches it supports.
 | -i,<br> --input       | Analyze logs from data persistence rather than buffer stream  | teler -i /var/log/nginx/access.log |
 | -x,<br> --concurrent  | Set the concurrency level to analyze logs<br>(default: 20)    | tail -f /var/log/nginx/access.log \| teler -x 50 |
 | -o,<br> --output      | Save detected threats to file                                 | teler -i /var/log/nginx/access.log -o /tmp/threats.log |
+| --json                | Display threats in the terminal as JSON format                | teler -i /var/log/nginx/access.log --json |
+| --rm-cache            | Remove all cached resources                                   | teler --rm-cache |
 | -v,<br> --version     | Show current teler version                                    | teler -v |
 
 #### Config
@@ -200,7 +216,25 @@ Concurrency is the number of logs analyzed at the same time. Default value teler
 You can also save the detected threats into a file with `-o` flag.
 
 ```bash
-▶ teler -i /var/log/nginx/access.log -o nginx-threat.log
+▶ teler -i /var/log/nginx/access.log -o threats.log
+```
+
+#### JSON Format
+
+If you want to display the detected threats as JSON format, switch it with `--json` flag.
+
+```bash
+▶ teler -i /var/log/nginx/access.log --json
+```
+
+Please note this will also apply if you save it to a file with `-o` flag.
+
+#### Remove Caches
+
+It will removes all stored resources in the user-level cache directory, see [cache](#cache).
+
+```bash
+▶ teler --rm-cache
 ```
 
 ## Configuration
@@ -264,6 +298,17 @@ log_format: |
 
 ### Threat rules
 
+#### Cache
+
+By default, `teler` will fetch external resources every time you run it, but you can switch external resources to be cached or not.
+
+```yaml
+rules:
+  cache: true
+```
+
+If you choose to cache resources, it's stored under user-level cache directory of cross-platform and will be updated every day, see [resources](#resources).
+
 #### Excludes
 
 We include resources for predetermined threats, including:
@@ -273,7 +318,7 @@ We include resources for predetermined threats, including:
 - Bad Crawler
 - Directory Bruteforce
 
-You can disable any type of threat in the `excludes` configuration.
+You can disable any type of threat in the `excludes` configuration _(case-sensitive)_.
 
 ```yaml
 rules:
@@ -292,16 +337,18 @@ You can also add whitelists to teler configuration.
 rules:
   threat:
     whitelists:
-      - "okhttp"
+      - "(curl|Go-http-client|okhttp)/*"
+      - "^/wp-login\\.php"
 ```
 
-All the lists you fill include whitelisting user-agent, request path, HTTP referrer, IP address and/or request query values.
+It covers the entire HTTP request and processed as _regExp_, please write it with caution!
 
 ### Notification
 
 We provide alert notification options:
-- Slack
-- or Telegram
+- Slack,
+- Telegram
+- Discord
 
 Configure the notification alerts needed on:
 
@@ -311,6 +358,15 @@ notifications:
     token: "xoxb-..."
     color: "#ffd21a"
     channel: "G30SPKI"
+
+  telegram:
+    token: "123456:ABC-DEF1234...-..."
+    chat_id: "-111000"
+
+  discord:
+    token: "NkWkawkawkawkawka.X0xo.n-kmZwA8aWAA"
+    color: "16312092"
+    channel: "700000000000000..."
 ```
 
 You can also choose to disable alerts or want to be sent where the alerts are.
@@ -320,6 +376,33 @@ alert:
   active: true
   provider: "slack"
 ```
+
+### Metrics
+
+`teler` also supports metrics using Prometheus.
+
+#### Prometheus
+
+You can configure the host, port and endpoint to use Prometheus metrics in the configuration file.
+
+```yaml
+prometheus:
+  active: true
+  host: "localhost"
+  port: 9099
+  endpoint: "/metrics"
+```
+
+Here are all the metrics we collected & categorized.
+
+| Metric                       | Description                          |
+| ---------------------------- | ------------------------------------ |
+| `teler_threats_count_total`  | Total number of detected threats     |
+| `teler_cwa`                  | Get lists of Common Web Attacks      |
+| `teler_badcrawler`           | Get lists of Bad Crawler requests    |
+| `teler_dir_bruteforce`       | Get lists of Directories Bruteforced |
+| `teler_bad_referrer`         | Get lists of Bad Referrer requests   |
+| `teler_badip_count`          | Total number of Bad IP Addresses     |
 
 ## Contributors
 
@@ -333,8 +416,19 @@ This project exists thanks to all the people who contribute. To learn how to set
 <table>
   <tr>
     <td align="center"><a href="https://dw1.io"><img src="https://avatars0.githubusercontent.com/u/25837540?v=4" width="100px;" alt=""/><br /><sub><b>Dwi Siswanto</b></sub></a><br /><a href="https://github.com/kitabisa/teler/commits?author=dwisiswant0" title="Code">💻</a> <a href="https://github.com/kitabisa/teler/commits?author=dwisiswant0" title="Documentation">📖</a> <a href="https://github.com/kitabisa/teler/commits?author=dwisiswant0" title="Tests">⚠️</a> <a href="#ideas-dwisiswant0" title="Ideas, Planning, & Feedback">🤔</a></td>
-    <td align="center"><a href="https://twitter.com/satyrius"><img src="https://avatars2.githubusercontent.com/u/278630?v=4" width="100px;" alt=""/><br /><sub><b>Anton Egorov</b></sub></a><br /><a href="#tool-satyrius" title="Tools">🔧</a></td>
     <td align="center"><a href="https://projectdiscovery.io/open-source"><img src="https://avatars1.githubusercontent.com/u/50994705?v=4" width="100px;" alt=""/><br /><sub><b>ProjectDiscovery</b></sub></a><br /><a href="#tool-projectdiscovery" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://twitter.com/satyrius"><img src="https://avatars2.githubusercontent.com/u/278630?v=4" width="100px;" alt=""/><br /><sub><b>Anton Egorov</b></sub></a><br /><a href="#tool-satyrius" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/0ktavandi"><img src="https://avatars0.githubusercontent.com/u/26356781?v=4" width="100px;" alt=""/><br /><sub><b>0ktavandi</b></sub></a><br /><a href="#ideas-0ktavandi" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http:///instagram.com/fikcompany"><img src="https://avatars3.githubusercontent.com/u/73404079?v=4" width="100px;" alt=""/><br /><sub><b>Fik</b></sub></a><br /><a href="#design-fikridhiyau" title="Design">🎨</a></td>
+    <td align="center"><a href="https://github.com/fairyhunter13"><img src="https://avatars3.githubusercontent.com/u/12372147?v=4" width="100px;" alt=""/><br /><sub><b>fairyhunter13</b></sub></a><br /><a href="https://github.com/kitabisa/teler/commits?author=fairyhunter13" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://zufardhiyaulhaq.com"><img src="https://avatars3.githubusercontent.com/u/11990726?v=4" width="100px;" alt=""/><br /><sub><b>Zufar Dhiyaulhaq</b></sub></a><br /><a href="https://github.com/kitabisa/teler/commits?author=zufardhiyaulhaq" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/JustHumanz"><img src="https://avatars3.githubusercontent.com/u/43176061?v=4" width="100px;" alt=""/><br /><sub><b>Aldin Setiawan</b></sub></a><br /><a href="https://github.com/kitabisa/teler/commits?author=JustHumanz" title="Code">💻</a></td>
+    <td align="center"><a href="https://www.kirsle.net/"><img src="https://avatars2.githubusercontent.com/u/1663507?v=4" width="100px;" alt=""/><br /><sub><b>Noah Petherbridge</b></sub></a><br /><a href="#tool-kirsle" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://github.com/zackijack"><img src="https://avatars3.githubusercontent.com/u/1515471?v=4" width="100px;" alt=""/><br /><sub><b>Zackky Muhammad</b></sub></a><br /><a href="#infra-zackijack" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/acarl005"><img src="https://avatars0.githubusercontent.com/u/8334252?v=4" width="100px;" alt=""/><br /><sub><b>Andy</b></sub></a><br /><a href="#tool-acarl005" title="Tools">🔧</a></td>
+    <td align="center"><a href="https://victoriametrics.com"><img src="https://avatars0.githubusercontent.com/u/283442?v=4" width="100px;" alt=""/><br /><sub><b>Aliaksandr Valialkin</b></sub></a><br /><a href="#tool-valyala" title="Tools">🔧</a></td>
   </tr>
 </table>
 
@@ -344,7 +438,7 @@ This project exists thanks to all the people who contribute. To learn how to set
 
 ### Resources
 
-All external resources used in this teler are **NOT** from us. See all peoples who involved in this resources at [teler Resource Collections](https://github.com/kitabisa/teler-resources).
+All external resources used in this teler are **NOT** provided by us. See all peoples who involved in this resources at [teler Resource Collections](https://github.com/kitabisa/teler-resources).
 
 ## Pronunciation
 
@@ -357,3 +451,5 @@ For changes, see the [CHANGELOG.md](https://github.com/kitabisa/teler/blob/devel
 ## License
 
 This program is free software: you can redistribute it and/or modify it under the terms of the [Apache license](https://github.com/kitabisa/teler/blob/development/LICENSE). Kitabisa teler and any contributions are Copyright © by Dwi Siswanto 2020.
+
+[![Stargazers over time](https://starchart.cc/kitabisa/teler.svg)](https://starchart.cc/kitabisa/teler)

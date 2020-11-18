@@ -26,30 +26,23 @@ func IsToken(s string) {
 	}
 }
 
-// IsHexcolor validates the hex color code
-func IsHexcolor(s string) {
-	if regexp := IsMatch(PatternHexcolor, s); !regexp {
-		errValidate("hex color")
+// IsColor validates the color code
+func IsColor(s string) {
+	if regexp := IsMatch(PatternColor, s); !regexp {
+		errValidate("(hex) color")
 	}
 }
 
-// IsParseMode validates the parse mode for Telegram
-func IsParseMode(s string) {
-	if regexp := IsMatch(PatternParseMode, s); !regexp {
-		errValidate("parse mode [Mardown(v2), or HTML]")
-	}
-}
-
-// IsChannel validates the channel for Slack
+// IsChannel validates the channel for Slack & Discord
 func IsChannel(s string) {
 	if regexp := IsMatch(PatternChannel, s); !regexp {
-		errValidate("Slack channel")
+		errValidate("channel")
 	}
 }
 
-// IsChatID validates the chat_id for Slack
+// IsChatID validates the chat_id for Telegram
 func IsChatID(s string) {
-	if _, isFloat := strconv.ParseFloat(s, 8); isFloat != nil {
+	if _, isFloat := strconv.ParseFloat(s, 64); isFloat != nil {
 		errValidate("chat_id")
 	}
 }

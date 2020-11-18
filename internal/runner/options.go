@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"ktbs.dev/teler/common"
+	"ktbs.dev/teler/pkg/cache"
 	"ktbs.dev/teler/pkg/errors"
 	"ktbs.dev/teler/pkg/requests"
 )
@@ -30,6 +31,10 @@ func ParseOptions() *common.Options {
 	flag.BoolVar(&options.Version, "v", false, "")
 	flag.BoolVar(&options.Version, "version", false, "")
 
+	flag.BoolVar(&options.RmCache, "rm-cache", false, "")
+
+	flag.BoolVar(&options.JSON, "json", false, "")
+
 	// Override help flag
 	flag.Usage = func() {
 		showBanner()
@@ -43,6 +48,8 @@ func ParseOptions() *common.Options {
 			"  -i, --input <FILE>          Analyze logs from data persistence rather than buffer stream",
 			"  -x, --concurrent <i>        Set the concurrency level to analyze logs (default: 20)",
 			"  -o, --output <FILE>         Save detected threats to file",
+			"      --json                  Display threats in the terminal as JSON format",
+			"      --rm-cache              Removes all cached resources",
 			"  -v, --version               Show current teler version",
 			"",
 			"Examples:",
@@ -63,15 +70,23 @@ func ParseOptions() *common.Options {
 	// Show the banner to user
 	showBanner()
 
+	// Removes all cached resources on user-level directory
+	if options.RmCache {
+		rmCache()
+	}
+
 	// Check if stdin pipe was given
 	options.Stdin = hasStdin()
 
 	// Validates all given args/opts also for user teler config
 	validate(options)
 
-	// Check internet connection before get resources
-	if !isConnected() {
-		errors.Exit("Check your internet connection")
+	// Check if resources is cached, then check
+	// internet connection before get remote resources
+	if !cache.Check() {
+		if !isConnected() {
+			errors.Exit("Check your internet connection")
+		}
 	}
 
 	// Getting all resources

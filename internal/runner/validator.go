@@ -3,6 +3,7 @@ package runner
 import (
 	"os"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"gopkg.in/validator.v2"
@@ -54,6 +55,27 @@ func validate(options *common.Options) {
 	}
 }
 
+func prometheus(options *common.Options) (bool, string, string) {
+	config := options.Configs
+	if config.Prometheus.Active {
+		if config.Prometheus.Host == "" {
+			config.Prometheus.Host = "127.0.0.1"
+		}
+
+		if config.Prometheus.Port == 0 {
+			config.Prometheus.Port = 9090
+		}
+
+		if config.Prometheus.Endpoint == "" {
+			config.Prometheus.Endpoint = "/metrics"
+		}
+	}
+
+	server := config.Prometheus.Host + ":" + strconv.Itoa(config.Prometheus.Port)
+
+	return config.Prometheus.Active, server, config.Prometheus.Endpoint
+}
+
 func notification(options *common.Options) {
 	config := options.Configs
 
@@ -62,14 +84,11 @@ func notification(options *common.Options) {
 		field := reflect.ValueOf(&config.Notifications).Elem().FieldByName(provider)
 
 		switch provider {
-		case "Slack":
-			field.FieldByName("URL").SetString(SlackAPI)
-			matchers.IsHexcolor(field.FieldByName("Color").String())
+		case "Slack", "Discord":
+			matchers.IsColor(field.FieldByName("Color").String())
 			matchers.IsChannel(field.FieldByName("Channel").String())
 		case "Telegram":
-			field.FieldByName("URL").SetString(strings.Replace(TelegramAPI, ":token", field.FieldByName("Token").String(), -1))
 			matchers.IsChatID(field.FieldByName("ChatID").String())
-			matchers.IsParseMode(field.FieldByName("ParseMode").String())
 		default:
 			errors.Exit(strings.Replace(errors.ErrAlertProvider, ":platform", config.Alert.Provider, -1))
 		}
